@@ -18,6 +18,7 @@ int no;
 void initializeBoard();
 bool solve();
 bool checkSolve();
+bool isSafe(char boardValue,int k,int i,int j);
 int clrscr()
 {
     system("cls");
@@ -194,6 +195,7 @@ void play()
             continue;
 
         }
+
         printf("Enter bord no : ");
         scanf("%d",&bno);
         bno--;
@@ -340,58 +342,35 @@ bool checkSolve()
 
 bool solve()
 {
-    char boardValue;
-    int bno,bx,by,flag = 0;
     for(int k=0;k<9;k++)
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)
     {
-        if(board[k][i][j] != ' ')
-            continue;
-        else
+        if(board[k][i][j] == ' ')
         {
-            for(int l=1;l<10;l++)
+            for(char  boardValue='1';boardValue <= '9';boardValue++)
             {
-                bno = k;
-                bx = i; 
-                by = j;
-                flag = 0;
-                sprintf(&boardValue,"%d",l);
-                board[k][i][j] = boardValue;
-
-                for(int p=0;p<3;p++)
-                for(int q=0;q<3;q++)
+                
+                
+                
+                if(isSafe(boardValue,k,i,j))
                 {
-                    if(boardValue == board[bno][p][q])
-                    flag = 1;
+                    board[k][i][j] = boardValue;
                     
+                    if(solve())
+                    return true;
+                    board[k][i][j] = ' ';
+
+
                 }
 
-                for(int r=bno % 3 ;r<9;r+=3)
-                for(int p=0;p<3;p++)
-                {
-                    if(boardValue == board[r][p][by])
-                    flag = 1;
-                }
-
-                int cbno = (bno / 3) * 3;
-                int ebno = cbno + 3;
-
-                for(int r=cbno;r<ebno;r++)
-                for(int q=0;q<3;q++)
-                {
-                    if(boardValue == board[r][bx][q])
-                    flag = 1;
-                }
-                if(flag == 1)
-                continue;
-                if(solve())
-                return true;
-                else
-                continue;
+                
+                
+                
 
 
             }
+            return false;
             
         }
     
@@ -399,3 +378,92 @@ bool solve()
     return true;
     
 }
+
+
+
+bool isSafe(char boardValue,int k,int i,int j)
+{
+    int flag=0;
+    for(int p=0;p<3;p++)
+                for(int q=0;q<3;q++)
+                {
+                    if(boardValue == board[k][p][q])
+                    flag = 1;
+                    
+                }
+
+                for(int r=k % 3 ;r<9;r+=3)
+                for(int p=0;p<3;p++)
+                {
+                    if(boardValue == board[r][p][j])
+                    flag = 1;
+                }
+
+                int cbno = (k / 3) * 3;
+                int ebno = cbno + 3;
+
+                for(int r=cbno;r<ebno;r++)
+                for(int q=0;q<3;q++)
+                {
+                    if(boardValue == board[r][i][q])
+                    flag = 1;
+                }
+                if(flag == 1)
+                return false;
+                return true;
+}
+
+
+
+
+/*
+bool solve() {
+    for (int k = 0; k < 9; k++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[k][i][j] == ' ') {
+
+
+
+
+                    for (char value = '1'; value <= '9'; value++) {
+
+
+
+                        if (isSafe(value, k, i, j)) {
+
+
+                            board[k][i][j] = value;
+
+
+                            if (solve()) {
+
+
+
+
+                                return true;
+                            }
+
+
+                            board[k][i][j] = ' '; // Undo the change (backtracking)
+                        }
+
+
+
+
+                    }
+                    return false; // No valid number found, trigger backtracking
+
+
+
+
+
+
+
+                }
+            }
+        }
+    }
+    return true; // Puzzle solved
+}
+*/
